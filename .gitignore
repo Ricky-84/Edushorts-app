@@ -1,0 +1,72 @@
+# Dependencies
+node_modules/
+*/node_modules/
+backend/node_modules/
+
+# Build outputs
+build/
+dist/
+android/app/build/
+android/build/
+ios/build/
+
+# Environment variables with secrets
+.env.local
+.env.production
+.env.staging
+
+# Keep .env for development template
+# .env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# React Native
+*.orig.*
+web-build/
+metro.config.js.bak
+
+# Temporary files
+*.tmp
+*.temp
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Docker volumes
+postgres_data/
+redis_data/
+
+# Android specific
+android/app/debug.keystore
+android/app/release-unsigned.apk
+android/app/release-signed.apk
+
+# iOS specific (for future)
+ios/Pods/
+ios/*.xcworkspace
+ios/*.xcodeproj/xcuserdata/
+
+# Test coverage
+coverage/
+
+# Temporary debugging files
+.DS_Store
+*.tgz
+*.tar.gz
+
+# Backend specific
+backend/dist/
+backend/uploads/
+backend/.env.local
+backend/.env.production

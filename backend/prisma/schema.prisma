@@ -1,0 +1,166 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String   @map("password_hash")
+  avatar       String?
+  xp           Int      @default(0)
+  level        Int      @default(1)
+  streak       Int      @default(0)
+  lastActiveAt DateTime @default(now()) @map("last_active_at")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  progress     UserProgress[]
+  achievements UserAchievement[]
+  quizAttempts QuizAttempt[]
+
+  @@map("users")
+}
+
+model Video {
+  id           String      @id @default(cuid())
+  title        String
+  description  String
+  url          String
+  thumbnailUrl String      @map("thumbnail_url")
+  duration     Int // in seconds
+  subject      String
+  topic        String
+  difficulty   Difficulty
+  xpReward     Int         @default(10) @map("xp_reward")
+  viewCount    Int         @default(0) @map("view_count")
+  isPublished  Boolean     @default(false) @map("is_published")
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
+
+  // Relations
+  quiz         Quiz?
+  progress     UserProgress[]
+
+  @@map("videos")
+}
+
+model Quiz {
+  id           String    @id @default(cuid())
+  videoId      String    @unique @map("video_id")
+  title        String
+  passingScore Int       @default(70) @map("passing_score")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  video     Video           @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  questions QuizQuestion[]
+  attempts  QuizAttempt[]
+
+  @@map("quizzes")
+}
+
+model QuizQuestion {
+  id            String       @id @default(cuid())
+  quizId        String       @map("quiz_id")
+  question      String
+  options       String[] // JSON array of options
+  correctAnswer Int          @map("correct_answer") // Index of correct option
+  explanation   String
+  difficulty    Difficulty
+  points        Int          @default(1)
+  order         Int          @default(0) // Question order in quiz
+
+  // Relations
+  quiz Quiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  @@map("quiz_questions")
+}
+
+model UserProgress {
+  id          String    @id @default(cuid())
+  userId      String    @map("user_id")
+  videoId     String    @map("video_id")
+  watchTime   Int       @default(0) @map("watch_time") // in seconds
+  completed   Boolean   @default(false)
+  quizScore   Int?      @map("quiz_score") // percentage
+  xpEarned    Int       @default(0) @map("xp_earned")
+  completedAt DateTime? @map("completed_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  video Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, videoId])
+  @@map("user_progress")
+}
+
+model Achievement {
+  id          String    @id @default(cuid())
+  title       String
+  description String
+  icon        String
+  xpReward    Int       @default(0) @map("xp_reward")
+  criteria    Json // JSON object defining criteria
+  isActive    Boolean   @default(true) @map("is_active")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  userAchievements UserAchievement[]
+
+  @@map("achievements")
+}
+
+model UserAchievement {
+  id            String   @id @default(cuid())
+  userId        String   @map("user_id")
+  achievementId String   @map("achievement_id")
+  progress      Int      @default(0) // for progressive achievements
+  unlockedAt    DateTime @default(now()) @map("unlocked_at")
+
+  // Relations
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, achievementId])
+  @@map("user_achievements")
+}
+
+model QuizAttempt {
+  id         String   @id @default(cuid())
+  userId     String   @map("user_id")
+  quizId     String   @map("quiz_id")
+  score      Int // percentage
+  answers    Json // JSON object of question_id -> selected_option
+  timeSpent  Int      @default(0) @map("time_spent") // in seconds
+  completed  Boolean  @default(false)
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quiz Quiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  @@map("quiz_attempts")
+}
+
+// Enums
+enum Difficulty {
+  beginner
+  intermediate
+  advanced
+}
