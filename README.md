@@ -15,8 +15,8 @@ EduShorts is a mobile-first educational platform that delivers college-level cou
 
 1. **Clone and setup the project:**
    ```bash
-   git clone <your-repo-url>
-   cd edushorts-app
+   git clone https://github.com/Ricky-84/Edushorts-app.git
+   cd Edushorts-app
    node scripts/setup-env.js
    ```
 
@@ -226,7 +226,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ### Getting Help
 
-- Check the [Issues](https://github.com/your-repo/issues) page
+- Check the [Issues](https://github.com/Ricky-84/Edushorts-app/issues) page
 - Review the [Documentation](./docs/)
 - Contact the development team
 
