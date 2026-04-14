@@ -7,6 +7,7 @@ const videoController = new VideoController();
 
 // Routes
 router.get('/', videoController.getVideos);
+router.get('/:id/stream', videoController.streamVideo);
 router.get('/:id', videoController.getVideo);
 router.post('/:id/progress', authenticate, videoController.updateProgress);
 router.get('/:id/quiz', videoController.getQuiz);

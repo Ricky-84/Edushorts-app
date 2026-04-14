@@ -3,6 +3,7 @@ import {persistStore, persistReducer} from 'redux-persist';
 import {MMKV} from 'react-native-mmkv';
 
 import authSlice from './slices/authSlice';
+import videoSlice from './slices/videoSlice';
 
 // Configure MMKV storage
 const storage = new MMKV();
@@ -30,6 +31,7 @@ const persistConfig = {
 
 const rootReducer = {
   auth: persistReducer(persistConfig, authSlice),
+  video: videoSlice,
 };
 
 export const store = configureStore({

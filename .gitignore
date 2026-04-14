@@ -48,6 +48,8 @@ postgres_data/
 redis_data/
 
 # Android specific
+android/.gradle/
+.claude/
 android/app/debug.keystore
 android/app/release-unsigned.apk
 android/app/release-signed.apk
